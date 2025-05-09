@@ -1,4 +1,6 @@
 from main import get_summ_text
+from fastapi.testclient import TestClient
+from main import app
 
 def test_age_count_2():
     assert get_summ_text(
@@ -11,3 +13,9 @@ def test_age_count_3():
 
 def test_empty_text():
     assert get_summ_text('Привет') == ''
+
+def test_health_endpoint():
+    client = TestClient(app)
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}

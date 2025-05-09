@@ -31,5 +31,13 @@ async def get_summary(text: str = ''):
 
 @app.get("/health")
 async def health():
-    return {"status": "ok"}
+    test_text = "Это тестовая строка для проверки работоспособности суммаризации."
+    try:
+        summary = summarizer.summarize(test_text)
+        if summary:
+            return {"status": "ok"}
+        else:
+            return {"status": "not ok", "error": "Суммаризация не работает (пустой ответ)"}
+    except Exception as e:
+        return {"status": "not ok", "error": str(e)}
 
