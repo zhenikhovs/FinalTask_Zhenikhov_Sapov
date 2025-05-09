@@ -1,7 +1,16 @@
 from fastapi import FastAPI
 from transformers import T5Tokenizer, T5ForConditionalGeneration
+from transformers import pipeline
 
 app = FastAPI()
+class SentimentAnalyzer:
+    def __init__(self):
+        self.classifier = pipeline("sentiment-analysis")
+
+    def analyze(self, text: str):
+        return self.classifier(text)
+sentiment_analyzer = SentimentAnalyzer()
+
 
 class Summarizer:
     def __init__(self, model_name: str):
@@ -41,3 +50,12 @@ async def health():
     except Exception as e:
         return {"status": "not ok", "error": str(e)}
 
+
+@app.get("/get_summary_sentiment/")
+async def get_summary_sentiment(text: str = ''):
+    return summarize_and_analyze(text)
+
+def summarize_and_analyze(text: str):
+    sum_text = get_summ_text(text)
+    sentiment = sentiment_analyzer.analyze(sum_text)
+    return {"summarized_text": sum_text, "sentiment": sentiment}
